@@ -475,8 +475,8 @@
         <nav>
             <a href="#about">О сервере</a>
             <a href="#donate">Привилегии</a>
+            <a href="#" onclick="openStatusModal(); return false;" style="color:#4cc9f0;">🔍 Моя заявка</a>
             <a href="#recruit">Набор в пиар</a>
-            <a href="https://t.me" target="_blank">Канал</a>
         </nav>
     </header>
 
@@ -768,7 +768,7 @@
             <div id="step2" style="display:none;">
                 <h3 style="margin-bottom:12px;">Заявка высшей администрации</h3>
                 <div class="admin-notice">
-                    ⚠️ Чтобы купить привилегию <strong id="selectedDonateText"></strong>, подайте заявку высшей администрации! Мы свяжемся с вами для оплаты и выдачи.
+                    ⚠️ Чтобы купить привилегию <strong id="selectedDonateText"></strong>, подайте заявку высшей администрации! Ответ с реквизитами появится во вкладке <strong>«🔍 Моя заявка»</strong>.
                 </div>
                 <input type="text" class="modal-input" id="nickStep2" readonly>
                 <input type="text" class="modal-input" id="contactInput" placeholder="Контакт для связи (VK, Discord или в игре)">
@@ -782,16 +782,30 @@
                 <div style="font-size:3.2rem; margin-bottom:10px;">✅</div>
                 <h3 style="margin-bottom:10px;">Заявка отправлена!</h3>
                 <p style="color:#a09cb0; font-size:0.92rem; margin-bottom:20px;">
-                    Высшая администрация <strong>Aetherfall SMP</strong> получила вашу заявку в базу данных и скоро свяжется с вами.
+                    Отслеживайте ответ администратора (номер карты или контакт) через кнопку <strong>«🔍 Моя заявка»</strong> в меню сайта!
                 </p>
                 <button class="btn btn-primary" style="width:100%;" onclick="closeBuyModal()">Отлично</button>
             </div>
         </div>
     </div>
 
+    <!-- Модальное окно проверки статуса заявки для игрока -->
+    <div class="modal-overlay" id="statusModal">
+        <div class="modal-box" style="max-width:520px; max-height:85vh; overflow-y:auto;">
+            <button class="close-modal" onclick="closeStatusModal()">&times;</button>
+            <h3 style="margin-bottom:10px;">🔍 Проверка статуса заявки</h3>
+            <p style="color:#a09cb0; font-size:0.88rem; margin-bottom:12px;">Введите ваш ник, чтобы увидеть ответ высшей администрации:</p>
+            <div style="display:flex; gap:8px; margin-bottom:16px;">
+                <input type="text" class="modal-input" id="checkNickInput" placeholder="Ваш игровой ник" style="margin:0;">
+                <button class="btn btn-primary" onclick="checkPlayerStatus()" style="padding:12px 20px;">Найти</button>
+            </div>
+            <div id="playerRequestsResult" style="text-align:left; display:flex; flex-direction:column; gap:12px;"></div>
+        </div>
+    </div>
+
     <!-- Модальное окно Админ-панели -->
     <div class="modal-overlay" id="adminModal">
-        <div class="modal-box" style="max-width:650px; max-height:85vh; overflow-y:auto;">
+        <div class="modal-box" style="max-width:680px; max-height:85vh; overflow-y:auto;">
             <button class="close-modal" onclick="closeAdminModal()">&times;</button>
 
             <div id="adminLoginBox">
@@ -806,18 +820,17 @@
                     <h3>📋 Заявки на донат (<span id="currentAdminName"></span>)</h3>
                     <button onclick="loadRequests()" style="background:#229ED9; color:#fff; border:none; padding:6px 12px; border-radius:8px; cursor:pointer; font-weight:700;">🔄 Обновить</button>
                 </div>
-                <div id="requestsList" style="display:flex; flex-direction:column; gap:12px;">
+                <div id="requestsList" style="display:flex; flex-direction:column; gap:14px;">
                     Загрузка заявок...
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="toast">✅ IP-адрес Aetherfall SMP скопирован!</div>
+    <div id="toast">✅ Скопировано!</div>
     <script>
-        const FIREBASE_BASE = "https://smp12-835e6-default-rtdb.firebaseio.com/";
+        const FIREBASE_BASE = "https://firebaseio.com";
         
-        // Аккаунты высшей администрации
         const ADMINS = {
             "Direktor2990": "smpsmpsmp222",
             "KorolSMP222": "KorolKing2222",
@@ -827,11 +840,22 @@
         let currentDonate = "";
         let currentPrice = "";
 
+        function showToast(msg) {
+            const toast = document.getElementById("toast");
+            toast.innerText = msg;
+            toast.className = "show";
+            setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 2900);
+        }
+
         function copyIP(ip) {
             navigator.clipboard.writeText(ip).then(() => {
-                const toast = document.getElementById("toast");
-                toast.className = "show";
-                setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 2900);
+                showToast("✅ IP-адрес Aetherfall SMP скопирован!");
+            });
+        }
+
+        function copyText(txt) {
+            navigator.clipboard.writeText(txt).then(() => {
+                showToast("✅ Реквизиты / текст скопированы!");
             });
         }
 
@@ -868,7 +892,7 @@
             document.getElementById("step2").style.display = "block";
         }
 
-               async function sendToFirebase() {
+        async function sendToFirebase() {
             const nickname = document.getElementById("nickStep2").value.trim();
             const contact = document.getElementById("contactInput").value.trim();
             const comment = document.getElementById("commentInput").value.trim();
@@ -888,7 +912,8 @@
                 contact: contact,
                 comment: comment || "Без комментария",
                 date: new Date().toLocaleString("ru-RU"),
-                status: "Ожидает выдачи"
+                status: "Ожидает ответа админа",
+                adminReply: ""
             };
 
             try {
@@ -898,22 +923,80 @@
                     body: JSON.stringify(payload)
                 });
 
-                const resData = await response.json();
-
                 if (response.ok) {
                     document.getElementById("step2").style.display = "none";
                     document.getElementById("step3").style.display = "block";
                 } else {
-                    alert("Код ошибки: " + response.status + " | Причина: " + JSON.stringify(resData));
+                    alert("Ошибка при отправке. Проверьте правила Rules в Firebase.");
                 }
             } catch (error) {
-                alert("Ошибка сети: " + error.message);
+                alert("Ошибка соединения с базой данных.");
             } finally {
                 btn.disabled = false;
                 btn.innerText = "📩 Подать заявку";
             }
         }
 
+        function openStatusModal() {
+            document.getElementById("statusModal").classList.add("open");
+        }
+
+        function closeStatusModal() {
+            document.getElementById("statusModal").classList.remove("open");
+        }
+
+        async function checkPlayerStatus() {
+            const nick = document.getElementById("checkNickInput").value.trim().toLowerCase();
+            const resBox = document.getElementById("playerRequestsResult");
+
+            if (!nick) {
+                alert("Введите ваш игровой ник!");
+                return;
+            }
+
+            resBox.innerHTML = "<p style='color:#a09cb0;'>Поиск заявок...</p>";
+
+            try {
+                const res = await fetch(`${FIREBASE_BASE}.json`);
+                const data = await res.json();
+
+                if (!data) {
+                    resBox.innerHTML = "<p style='color:#a09cb0;'>Заявок с таким ником не найдено.</p>";
+                    return;
+                }
+
+                const matches = Object.values(data).filter(item => item.nickname && item.nickname.toLowerCase() === nick).reverse();
+
+                if (matches.length === 0) {
+                    resBox.innerHTML = "<p style='color:#a09cb0;'>Заявок с ником <b>" + nick + "</b> пока нет.</p>";
+                    return;
+                }
+
+                resBox.innerHTML = "";
+                matches.forEach(item => {
+                    const hasReply = item.adminReply && item.adminReply.trim() !== "";
+                    const div = document.createElement("div");
+                    div.style.cssText = "background:#0e0b1a; border:1px solid #9d4edd; border-radius:14px; padding:14px;";
+                    div.innerHTML = `
+                        <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                            <strong style="color:#ffb703;">${item.donate}</strong>
+                            <span style="font-size:0.78rem; color:#a09cb0;">${item.date}</span>
+                        </div>
+                        <p style="font-size:0.88rem; margin-bottom:8px;">Статус: <strong style="color:#4cc9f0;">${item.status}</strong></p>
+                        <div style="background:rgba(157, 78, 221, 0.15); border:1px solid #9d4edd; padding:10px; border-radius:10px;">
+                            <div style="font-size:0.8rem; color:#e0aaff; font-weight:700; margin-bottom:4px;">💬 Сообщение от администрации:</div>
+                            <div style="font-size:0.92rem; color:#fff; word-break:break-word;">
+                                ${hasReply ? item.adminReply : "<span style='color:#a09cb0;'>Администратор скоро напишет сюда реквизиты или контакт...</span>"}
+                            </div>
+                            ${hasReply ? `<button onclick="copyText('${item.adminReply.replace(/'/g, "\\'")}')" style="margin-top:8px; background:#229ED9; color:#fff; border:none; padding:5px 10px; border-radius:6px; cursor:pointer; font-size:0.8rem; font-weight:700;">📋 Скопировать ответ</button>` : ""}
+                        </div>
+                    `;
+                    resBox.appendChild(div);
+                });
+            } catch (e) {
+                resBox.innerHTML = "<p style='color:#e63946;'>Ошибка загрузки данных.</p>";
+            }
+        }
         function openAdminModal() {
             document.getElementById("adminModal").classList.add("open");
         }
@@ -963,7 +1046,16 @@
                             <span style="font-size:0.78rem; color:#a09cb0;">${item.date}</span>
                         </div>
                         <p style="font-size:0.88rem; margin-bottom:4px;">📞 <b>Связь:</b> ${item.contact}</p>
-                        <p style="font-size:0.88rem; margin-bottom:8px; color:#d8d4e8;">💬 <b>Коммент:</b> ${item.comment}</p>
+                        <p style="font-size:0.88rem; margin-bottom:10px; color:#d8d4e8;">💬 <b>Коммент игрока:</b> ${item.comment}</p>
+                        
+                        <div style="background:rgba(255,255,255,0.04); padding:10px; border-radius:10px; margin-bottom:10px;">
+                            <label style="font-size:0.78rem; color:#e0aaff; font-weight:700; display:block; margin-bottom:5px;">✍️ Написать игроку (номер карты, СБП или куда писать):</label>
+                            <div style="display:flex; gap:8px;">
+                                <input type="text" id="reply-${key}" value="${item.adminReply || ''}" placeholder="Например: Карта 2200... или мой VK..." style="flex:1; padding:8px 10px; border-radius:8px; border:1px solid rgba(255,255,255,0.15); background:#151226; color:#fff; font-size:0.88rem;">
+                                <button onclick="sendAdminReply('${key}')" style="background:#9d4edd; color:#fff; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; font-weight:700; font-size:0.82rem;">Отправить</button>
+                            </div>
+                        </div>
+
                         <div style="display:flex; justify-content:space-between; align-items:center;">
                             <span style="font-size:0.82rem; font-weight:800; color:${isDone ? '#2ecc71' : '#4cc9f0'};">Статус: ${item.status}</span>
                             <div style="display:flex; gap:8px;">
@@ -975,8 +1067,22 @@
                     listEl.appendChild(card);
                 });
             } catch (e) {
-                listEl.innerHTML = "<p style='color:#e63946;'>Ошибка загрузки! Проверь, что в Firebase Rules стоит .read: true для donate_requests.</p>";
+                listEl.innerHTML = "<p style='color:#e63946;'>Ошибка загрузки! Проверь Rules в Firebase.</p>";
             }
+        }
+
+        async function sendAdminReply(id) {
+            const replyText = document.getElementById(`reply-${id}`).value.trim();
+            await fetch(`${FIREBASE_BASE}/${id}.json`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    adminReply: replyText,
+                    status: replyText ? "Ожидает оплаты / ответа 💳" : "Ожидает ответа админа"
+                })
+            });
+            showToast("✅ Ответ отправлен игроку!");
+            loadRequests();
         }
 
         async function markDone(id) {
