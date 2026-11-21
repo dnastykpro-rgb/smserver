@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DragonWorld — Ванильный SMP сервер 26.2</title>
+    <title>Aetherfall SMP — Выживание 26.2</title>
     <link href="https://googleapis.com" rel="stylesheet">
     <style>
         :root {
@@ -12,6 +12,8 @@
             --accent: #9d4edd;
             --accent-glow: rgba(157, 78, 221, 0.5);
             --secondary: #ff6d00;
+            --gold: #ffb703;
+            --crimson: #e63946;
             --text-main: #ffffff;
             --text-muted: #a09cb0;
         }
@@ -35,19 +37,19 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 8%;
-            background: rgba(11, 9, 20, 0.8);
-            backdrop-filter: blur(10px);
+            padding: 18px 8%;
+            background: rgba(11, 9, 20, 0.85);
+            backdrop-filter: blur(12px);
             position: sticky;
             top: 0;
             z-index: 100;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
         }
 
         .logo {
-            font-size: 1.5rem;
+            font-size: 1.45rem;
             font-weight: 900;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
             background: linear-gradient(90deg, #fff, var(--accent));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -56,8 +58,9 @@
         nav a {
             color: var(--text-muted);
             text-decoration: none;
-            margin-left: 25px;
+            margin-left: 22px;
             font-weight: 600;
+            font-size: 0.92rem;
             transition: 0.3s;
         }
 
@@ -66,7 +69,7 @@
         }
 
         .hero {
-            min-height: 85vh;
+            min-height: 82vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -84,10 +87,11 @@
             font-size: 0.85rem;
             font-weight: 700;
             margin-bottom: 20px;
+            display: inline-block;
         }
 
         .hero h1 {
-            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-size: clamp(2.4rem, 6vw, 4.4rem);
             font-weight: 900;
             line-height: 1.1;
             margin-bottom: 20px;
@@ -100,11 +104,12 @@
         }
 
         .hero p {
-            max-width: 600px;
+            max-width: 620px;
             color: var(--text-muted);
-            font-size: 1.1rem;
+            font-size: 1.08rem;
             margin-bottom: 35px;
         }
+
         .cta-group {
             display: flex;
             gap: 15px;
@@ -113,14 +118,15 @@
         }
 
         .btn {
-            padding: 15px 32px;
+            padding: 14px 28px;
             border-radius: 12px;
             font-weight: 800;
-            font-size: 1rem;
+            font-size: 0.98rem;
             cursor: pointer;
             text-decoration: none;
             transition: all 0.3s ease;
             border: none;
+            display: inline-block;
         }
 
         .btn-primary {
@@ -144,27 +150,33 @@
             transform: translateY(-3px);
             background: #1d8ec4;
         }
-
         section {
-            padding: 80px 8%;
+            padding: 75px 8%;
         }
 
         .section-title {
             text-align: center;
-            font-size: 2.2rem;
+            font-size: 2.1rem;
             font-weight: 800;
-            margin-bottom: 50px;
+            margin-bottom: 12px;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: 45px;
+            font-size: 1rem;
         }
 
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 22px;
         }
 
         .card {
             background: var(--bg-card);
-            padding: 30px;
+            padding: 28px;
             border-radius: 20px;
             border: 1px solid rgba(255, 255, 255, 0.06);
             transition: transform 0.3s ease, border-color 0.3s ease;
@@ -175,66 +187,225 @@
             border-color: var(--accent);
         }
 
-        .card-icon {
-            font-size: 2.5rem;
-            margin-bottom: 15px;
+        .card-icon { font-size: 2.3rem; margin-bottom: 12px; }
+        .card h3 { margin-bottom: 8px; font-size: 1.25rem; }
+        .card p { color: var(--text-muted); font-size: 0.92rem; }
+
+        .donate-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 50px;
         }
 
-        .card h3 {
-            margin-bottom: 10px;
-            font-size: 1.3rem;
+        .donate-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 22px;
+            padding: 24px 18px;
+            text-align: center;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.3s ease;
         }
 
-        .card p {
+        .donate-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--secondary);
+            box-shadow: 0 12px 30px rgba(255, 109, 0, 0.18);
+        }
+
+        .donate-card:hover .char-avatar {
+            transform: scale(1.08) rotate(-2deg);
+        }
+
+        .tier-num {
+            position: absolute;
+            top: 12px;
+            right: 14px;
+            font-size: 0.75rem;
+            font-weight: 800;
             color: var(--text-muted);
-            font-size: 0.95rem;
+            background: rgba(255, 255, 255, 0.06);
+            padding: 3px 9px;
+            border-radius: 8px;
         }
+
+        .char-avatar {
+            width: 96px;
+            height: 96px;
+            margin: 5px auto 12px;
+            transition: transform 0.3s ease;
+        }
+
+        .donate-card h3 { font-size: 1.22rem; margin-bottom: 6px; }
+        .donate-tag { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 14px; }
+        .price-tag { font-size: 1.4rem; font-weight: 900; color: #4cc9f0; margin-bottom: 14px; }
+
+        .btn-buy {
+            width: 100%;
+            padding: 11px;
+            border-radius: 11px;
+            background: linear-gradient(45deg, var(--secondary), #ff9e00);
+            color: #fff;
+            font-weight: 800;
+            font-size: 0.95rem;
+            border: none;
+            cursor: pointer;
+            transition: 0.25s;
+        }
+
+        .btn-buy:hover { filter: brightness(1.12); transform: scale(1.02); }
+
+        .exclusive-title {
+            text-align: center;
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--gold);
+            margin-bottom: 22px;
+        }
+
+        .exclusive-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+            gap: 24px;
+            max-width: 820px;
+            margin: 0 auto;
+        }
+
+        .exclusive-card {
+            background: linear-gradient(145deg, #1f1428, #2b1224);
+            border: 2px solid var(--gold);
+            border-radius: 22px;
+            padding: 28px;
+            text-align: center;
+            box-shadow: 0 10px 35px rgba(255, 183, 3, 0.15);
+            transition: transform 0.3s ease;
+        }
+
+        .exclusive-card:hover { transform: scale(1.03); }
+
+        .lock-badge {
+            background: rgba(230, 57, 70, 0.2);
+            border: 1px solid var(--crimson);
+            color: #ff8fa3;
+            font-size: 0.75rem;
+            font-weight: 800;
+            padding: 4px 12px;
+            border-radius: 50px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .exclusive-card h3 { font-size: 1.5rem; color: var(--gold); margin-bottom: 8px; }
 
         .recruit-box {
             background: linear-gradient(135deg, #1b1535 0%, #2a163d 100%);
             border: 2px solid var(--accent);
             border-radius: 24px;
-            padding: 50px;
+            padding: 45px 30px;
             text-align: center;
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
         }
 
-        .recruit-box h2 {
-            font-size: 2rem;
-            margin-bottom: 15px;
-        }
-
-        .recruit-box p {
-            max-width: 650px;
-            margin: 0 auto 25px;
-            color: #d8d4e8;
-        }
+        .recruit-box h2 { font-size: 1.9rem; margin-bottom: 15px; }
+        .recruit-box p { max-width: 650px; margin: 0 auto 25px; color: #d8d4e8; }
 
         .perks {
             display: flex;
             justify-content: center;
-            gap: 20px;
+            gap: 15px;
             flex-wrap: wrap;
             margin-bottom: 30px;
         }
 
         .perk-item {
             background: rgba(255, 255, 255, 0.08);
-            padding: 10px 20px;
+            padding: 10px 18px;
             border-radius: 10px;
             font-weight: 600;
             font-size: 0.9rem;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(5, 4, 12, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 999;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.open { display: flex; animation: fadeInModal 0.3s ease; }
+
+        @keyframes fadeInModal {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .modal-box {
+            background: #18142c;
+            border: 2px solid var(--accent);
+            border-radius: 24px;
+            max-width: 440px;
+            width: 100%;
+            padding: 30px;
+            position: relative;
+            text-align: center;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 16px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.6rem;
+            cursor: pointer;
+        }
+
+        .close-modal:hover { color: #fff; }
+
+        .modal-input {
+            width: 100%;
+            padding: 13px 16px;
+            margin: 10px 0 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: #0d0b1a;
+            color: #fff;
+            font-size: 0.98rem;
+            outline: none;
+        }
+
+        .modal-input:focus { border-color: var(--accent); }
+
+        .admin-notice {
+            background: rgba(255, 183, 3, 0.12);
+            border: 1px solid var(--gold);
+            color: #ffe8a3;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 0.88rem;
+            margin-bottom: 16px;
+            text-align: left;
         }
 
         footer {
             text-align: center;
             padding: 30px;
             color: var(--text-muted);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             border-top: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        /* Анимации */
         .bg-glow {
             position: fixed;
             width: 500px;
@@ -262,9 +433,7 @@
             100% { transform: translate(60px, 40px) scale(1.2); }
         }
 
-        .pulse-anim {
-            animation: pulse 2s infinite;
-        }
+        .pulse-anim { animation: pulse 2s infinite; }
 
         @keyframes pulse {
             0% { box-shadow: 0 0 0 0 rgba(157, 78, 221, 0.4); }
@@ -272,16 +441,8 @@
             100% { box-shadow: 0 0 0 0 rgba(157, 78, 221, 0); }
         }
 
-        .reveal {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.8s ease;
-        }
-
-        .reveal.active {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s ease; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
 
         #toast {
             visibility: hidden;
@@ -298,11 +459,7 @@
             box-shadow: 0 10px 20px rgba(0,0,0,0.3);
         }
 
-        #toast.show {
-            visibility: visible;
-            animation: fadein 0.4s, fadeout 0.4s 2.5s;
-        }
-
+        #toast.show { visibility: visible; animation: fadein 0.4s, fadeout 0.4s 2.5s; }
         @keyframes fadein { from { bottom: 0; opacity: 0; } to { bottom: 30px; opacity: 1; } }
         @keyframes fadeout { from { bottom: 30px; opacity: 1; } to { bottom: 0; opacity: 0; } }
     </style>
@@ -313,76 +470,415 @@
     <div class="bg-glow-2"></div>
 
     <header>
-        <div class="logo">🐉 DragonWorld</div>
+        <div class="logo">⚡ Aetherfall SMP</div>
         <nav>
             <a href="#about">О сервере</a>
-            <a href="#recruit">Набор в команду</a>
+            <a href="#donate">Привилегии</a>
+            <a href="#recruit">Набор в пиар</a>
             <a href="https://t.me" target="_blank">Telegram</a>
         </nav>
     </header>
 
     <section class="hero">
-        <div class="badge pulse-anim">🔥 ВЕРСИЯ MINECRAFT 26.2</div>
-        <h1>Твоя новая история на <span>DragonWorld SMP</span></h1>
-        <p>Ламповое выживание без приватов и лишнего доната. Строй города, объединяйся в кланы, участвуй в ивентах и создавай историю мира вместе с нами!</p>
+        <div class="badge pulse-anim">🔥 MINECRAFT 26.2 • СЕЗОН ОТКРЫТ</div>
+        <h1>Добро пожаловать на <span>Aetherfall SMP</span></h1>
+        <p>Уникальное выживание на новейшей версии 26.2 со школьной иерархией статусов, ивентами и живым комьюнити. Залетай и займи своё место!</p>
         <div class="cta-group">
-            <!-- ЗАМЕНИ IP НИЖЕ НА СВОЙ -->
-            <button class="btn btn-primary" onclick="copyIP('play.dragonworld.ru')">📋 Скопировать IP: play.dragonworld.ru</button>
+            <button class="btn btn-primary" onclick="copyIP('aetherfallsmpnormm.vcraft.top:25162')">📋 IP: aetherfallsmpnormm.vcraft.top:25162</button>
             <a href="https://t.me" target="_blank" class="btn btn-tg">✈️ Наш Telegram</a>
         </div>
     </section>
 
     <section id="about" class="reveal">
-        <h2 class="section-title">Почему стоит залететь к нам?</h2>
+        <h2 class="section-title">Почему выбирают Aetherfall SMP?</h2>
+        <p class="section-subtitle">Всё, что нужно для комфортной игры без лагов и скуки</p>
         <div class="grid">
             <div class="card">
                 <div class="card-icon">⚡</div>
-                <h3>Новейшая версия 26.2</h3>
-                <p>Все свежие механики, блоки и мобы уже доступны. Мощное железо обеспечивает стабильные 20 TPS без лагов.</p>
+                <h3>Свежая версия 26.2</h3>
+                <p>Все новые блоки, мобы и механики уже работают на сервере со стабильными 20 TPS.</p>
             </div>
             <div class="card">
-                <div class="card-icon">🛡️</div>
-                <h3>Честная игра (SMP)</h3>
-                <p>Никаких креативов и продажных админок. Только чистое выживание, доверие игроков и честная экономика.</p>
+                <div class="card-icon">🏫</div>
+                <h3>Школьная иерархия</h3>
+                <p>Прокачивай свой статус от Школозавра до сурового Физрука.</p>
             </div>
             <div class="card">
                 <div class="card-icon">🎭</div>
-                <h3>Живое комьюнити и лор</h3>
-                <p>Регулярные сюжетные ивенты, выборы президента спавна, суды и масштабные совместные постройки.</p>
+                <h3>Движ и ивенты</h3>
+                <p>Регулярные события, клановые войны, экономика игроков и активная администрация.</p>
             </div>
         </div>
     </section>
+    <section id="donate" class="reveal">
+        <h2 class="section-title">Привилегии сервера</h2>
+        <p class="section-subtitle">Выбери своего персонажа и нажми «Купить», чтобы оформить заявку</p>
+
+        <div class="donate-grid">
+            <!-- 1. Школозавр -->
+            <div class="donate-card">
+                <span class="tier-num">#1 • Старт</span>
+                <div class="char-avatar">
+                    <svg viewBox="0 0 100 100">
+                        <rect x="25" y="15" width="50" height="45" rx="10" fill="#52b788"/>
+                        <polygon points="35,15 40,5 45,15" fill="#ffb703"/>
+                        <polygon points="55,15 60,5 65,15" fill="#ffb703"/>
+                        <rect x="33" y="30" width="10" height="10" rx="2" fill="#fff"/>
+                        <rect x="36" y="33" width="5" height="5" fill="#111"/>
+                        <rect x="57" y="30" width="10" height="10" rx="2" fill="#fff"/>
+                        <rect x="60" y="33" width="5" height="5" fill="#111"/>
+                        <rect x="40" y="47" width="20" height="5" rx="2" fill="#2d6a4f"/>
+                        <rect x="28" y="62" width="44" height="30" rx="8" fill="#40916c"/>
+                        <rect x="20" y="65" width="8" height="22" rx="4" fill="#e76f51"/>
+                        <rect x="72" y="65" width="8" height="22" rx="4" fill="#e76f51"/>
+                    </svg>
+                </div>
+                <h3>Школозавр</h3>
+                <p class="donate-tag">Стартовый ранг новичка с рюкзаком</p>
+                <div class="price-tag">19 ₽</div>
+                <button class="btn-buy" onclick="openBuyModal('Школозавр', '19 ₽')">Купить</button>
+            </div>
+
+            <!-- 2. Старшеклассник -->
+            <div class="donate-card">
+                <span class="tier-num">#2</span>
+                <div class="char-avatar">
+                    <svg viewBox="0 0 100 100">
+                        <rect x="26" y="16" width="48" height="44" rx="10" fill="#ffcdb2"/>
+                        <path d="M24 26 Q50 5 76 26 L76 16 Q50 2 24 16 Z" fill="#3d405b"/>
+                        <rect x="34" y="32" width="9" height="9" rx="2" fill="#222"/>
+                        <rect x="57" y="32" width="9" height="9" rx="2" fill="#222"/>
+                        <path d="M43 48 Q50 53 57 48" stroke="#222" stroke-width="3" fill="none" stroke-linecap="round"/>
+                        <rect x="26" y="62" width="48" height="30" rx="8" fill="#4361ee"/>
+                        <rect x="36" y="62" width="28" height="10" rx="4" fill="#f72585"/>
+                    </svg>
+                </div>
+                <h3>Старшеклассник</h3>
+                <p class="donate-tag">Стильный прикид и базовые команды</p>
+                <div class="price-tag">39 ₽</div>
+                <button class="btn-buy" onclick="openBuyModal('Старшеклассник', '39 ₽')">Купить</button>
+            </div>
+
+            <!-- 3. Умник -->
+            <div class="donate-card">
+                <span class="tier-num">#3</span>
+                <div class="char-avatar">
+                    <svg viewBox="0 0 100 100">
+                        <rect x="26" y="16" width="48" height="44" rx="10" fill="#ffe5d9"/>
+                        <rect x="26" y="12" width="48" height="12" rx="4" fill="#6d597a"/>
+                        <rect x="30" y="29" width="16" height="14" rx="3" fill="#fff" stroke="#1d3557" stroke-width="3"/>
+                        <rect x="54" y="29" width="16" height="14" rx="3" fill="#fff" stroke="#1d3557" stroke-width="3"/>
+                        <line x1="46" y1="35" x2="54" y2="35" stroke="#1d3557" stroke-width="3"/>
+                        <circle cx="38" cy="36" r="3" fill="#111"/>
+                        <circle cx="62" cy="36" r="3" fill="#111"/>
+                        <rect x="26" y="62" width="48" height="30" rx="8" fill="#457b9d"/>
+                        <polygon points="46,62 54,62 50,76" fill="#e63946"/>
+                    </svg>
+                </div>
+                <h3>Умник</h3>
+                <p class="donate-tag">Книга знаний и полезные бонусы</p>
+                <div class="price-tag">69 ₽</div>
+                <button class="btn-buy" onclick="openBuyModal('Умник', '69 ₽')">Купить</button>
+            </div>
+
+            <!-- 4. Майнкрафтер -->
+            <div class="donate-card">
+                <span class="tier-num">#4</span>
+                <div class="char-avatar">
+                    <svg viewBox="0 0 100 100">
+                        <rect x="26" y="18" width="48" height="42" rx="8" fill="#d4a373"/>
+                        <path d="M22 28 L22 12 L78 12 L78 28 L66 28 L66 20 L34 20 L34 28 Z" fill="#00b4d8"/>
+                        <rect x="34" y="34" width="10" height="7" fill="#fff"/>
+                        <rect x="38" y="34" width="6" height="7" fill="#480ca8"/>
+                        <rect x="56" y="34" width="10" height="7" fill="#fff"/>
+                        <rect x="56" y="34" width="6" height="7" fill="#480ca8"/>
+                        <rect x="42" y="48" width="16" height="5" fill="#7f4f24"/>
+                        <rect x="26" y="62" width="48" height="30" rx="6" fill="#0096c7"/>
+                    </svg>
+                </div>
+                <h3>Майнкрафтер</h3>
+                <p class="donate-tag">Алмазный шлем и крутой старт</p>
+                <div class="price-tag">99 ₽</div>
+                <button class="btn-buy" onclick="openBuyModal('Майнкрафтер', '99 ₽')">Купить</button>
+            </div>
+            <!-- 5. Двоешник -->
+            <div class="donate-card">
+                <span class="tier-num">#5</span>
+                <div class="char-avatar">
+                    <svg viewBox="0 0 100 100">
+                        <rect x="26" y="18" width="48" height="42" rx="10" fill="#ffcdb2"/>
+                        <rect x="22" y="12" width="52" height="11" rx="5" fill="#e63946"/>
+                        <rect x="65" y="16" width="22" height="6" rx="3" fill="#b5179e"/>
+                        <line x1="32" y1="29" x2="44" y2="33" stroke="#111" stroke-width="3"/>
+                        <line x1="68" y1="29" x2="56" y2="33" stroke="#111" stroke-width="3"/>
+                        <circle cx="38" cy="36" r="4" fill="#111"/>
+                        <circle cx="62" cy="36" r="4" fill="#111"/>
+                        <path d="M40 50 Q50 44 60 50" stroke="#111" stroke-width="3" fill="none"/>
+                        <rect x="26" y="62" width="48" height="30" rx="8" fill="#2b2d42"/>
+                        <text x="43" y="83" fill="#ef233c" font-weight="900" font-size="18">2</text>
+                    </svg>
+                </div>
+                <h3>Двоешник</h3>
+                <p class="donate-tag">Дерзкий хулиган с крутыми китами</p>
+                <div class="price-tag">139 ₽</div>
+                <button class="btn-buy" onclick="openBuyModal('Двоешник', '139 ₽')">Купить</button>
+            </div>
+
+            <!-- 6. Спортивный -->
+            <div class="donate-card">
+                <span class="tier-num">#6</span>
+                <div class="char-avatar">
+                    <svg viewBox="0 0 100 100">
+                        <rect x="26" y="16" width="48" height="44" rx="10" fill="#f4a261"/>
+                        <rect x="24" y="21" width="52" height="7" fill="#00f5d4"/>
+                        <circle cx="38" cy="36" r="4" fill="#111"/>
+                        <circle cx="62" cy="36" r="4" fill="#111"/>
+                        <path d="M41 47 Q50 55 59 47" stroke="#fff" stroke-width="3" fill="none"/>
+                        <rect x="24" y="62" width="52" height="30" rx="8" fill="#00bbf9"/>
+                        <line x1="32" y1="62" x2="32" y2="92" stroke="#fff" stroke-width="3"/>
+                        <line x1="68" y1="62" x2="68" y2="92" stroke="#fff" stroke-width="3"/>
+                    </svg>
+                </div>
+                <h3>Спортивный</h3>
+                <p class="donate-tag">Скорость, энергия и особые права</p>
+                <div class="price-tag">189 ₽</div>
+                <button class="btn-buy" onclick="openBuyModal('Спортивный', '189 ₽')">Купить</button>
+            </div>
+            <!-- 7. Шюцовка -->
+            <div class="donate-card">
+                <span class="tier-num">#7</span>
+                <div class="char-avatar">
+                    <svg viewBox="0 0 100 100">
+                        <rect x="26" y="16" width="48" height="44" rx="10" fill="#ffccd5"/>
+                        <path d="M24 22 Q50 4 76 22 Z" fill="#ff758f"/>
+                        <polygon points="28,30 48,30 45,41 31,41" fill="#111"/>
+                        <polygon points="52,30 72,30 69,41 55,41" fill="#111"/>
+                        <line x1="48" y1="32" x2="52" y2="32" stroke="#ffb703" stroke-width="3"/>
+                        <path d="M43 49 Q50 54 57 49" stroke="#c9184a" stroke-width="3" fill="none"/>
+                        <rect x="25" y="62" width="50" height="30" rx="8" fill="#7209b7"/>
+                        <path d="M38 62 Q50 76 62 62" stroke="#ffb703" stroke-width="3" fill="none"/>
+                    </svg>
+                </div>
+                <h3>Шюцовка</h3>
+                <p class="donate-tag">Элитный стиль и редкие фишки</p>
+                <div class="price-tag">239 ₽</div>
+                <button class="btn-buy" onclick="openBuyModal('Шюцовка', '239 ₽')">Купить</button>
+            </div>
+
+            <!-- 8. Физрук -->
+            <div class="donate-card">
+                <span class="tier-num">#8 • Топ</span>
+                <div class="char-avatar">
+                    <svg viewBox="0 0 100 100">
+                        <rect x="24" y="15" width="52" height="45" rx="10" fill="#e0a96d"/>
+                        <rect x="33" y="31" width="11" height="8" rx="2" fill="#111"/>
+                        <rect x="56" y="31" width="11" height="8" rx="2" fill="#111"/>
+                        <rect x="38" y="45" width="24" height="6" rx="2" fill="#5c4033"/>
+                        <rect x="20" y="62" width="60" height="32" rx="8" fill="#1b263b"/>
+                        <line x1="26" y1="62" x2="26" y2="94" stroke="#fff" stroke-width="2"/>
+                        <line x1="30" y1="62" x2="30" y2="94" stroke="#fff" stroke-width="2"/>
+                        <line x1="70" y1="62" x2="70" y2="94" stroke="#fff" stroke-width="2"/>
+                        <line x1="74" y1="62" x2="74" y2="94" stroke="#fff" stroke-width="2"/>
+                        <circle cx="50" cy="75" r="5" fill="#adb5bd"/>
+                    </svg>
+                </div>
+                <h3>Физрук</h3>
+                <p class="donate-tag">Максимальный доступный игрокам ранг</p>
+                <div class="price-tag">299 ₽</div>
+                <button class="btn-buy" onclick="openBuyModal('Физрук', '299 ₽')">Купить</button>
+            </div>
+        </div>
+        <!-- Закрытые высшие ранги -->
+        <div class="exclusive-title">👑 Высшая лига (Недоступно обычным игрокам)</div>
+        <div class="exclusive-grid">
+            <div class="exclusive-card">
+                <div class="lock-badge">🔒 НЕ ПРОДАЁТСЯ • ЗАКРЫТЫЙ РАНГ</div>
+                <div class="char-avatar">
+                    <svg viewBox="0 0 100 100">
+                        <rect x="26" y="16" width="48" height="44" rx="10" fill="#ffe5d9"/>
+                        <rect x="26" y="12" width="48" height="10" rx="4" fill="#adb5bd"/>
+                        <rect x="32" y="31" width="13" height="9" fill="none" stroke="#ffb703" stroke-width="2.5"/>
+                        <rect x="55" y="31" width="13" height="9" fill="none" stroke="#ffb703" stroke-width="2.5"/>
+                        <circle cx="38" cy="35" r="2.5" fill="#111"/>
+                        <circle cx="61" cy="35" r="2.5" fill="#111"/>
+                        <rect x="24" y="62" width="52" height="32" rx="6" fill="#111"/>
+                        <polygon points="46,62 54,62 50,82" fill="#ffb703"/>
+                    </svg>
+                </div>
+                <h3>Директор</h3>
+                <p style="color:#d8d4e8; font-size:0.9rem;">Высшая власть Aetherfall SMP. Получить этот статус обычным путём невозможно.</p>
+            </div>
+
+            <div class="exclusive-card">
+                <div class="lock-badge">🔒 НЕ ПРОДАЁТСЯ • ЛЕГЕНДА</div>
+                <div class="char-avatar">
+                    <svg viewBox="0 0 100 100">
+                        <polygon points="28,18 35,4 50,15 65,4 72,18" fill="#ffb703"/>
+                        <rect x="26" y="18" width="48" height="42" rx="10" fill="#ffccd5"/>
+                        <circle cx="38" cy="35" r="4" fill="#ffb703"/>
+                        <circle cx="62" cy="35" r="4" fill="#ffb703"/>
+                        <path d="M41 48 Q50 55 59 48" stroke="#111" stroke-width="3" fill="none"/>
+                        <rect x="22" y="62" width="56" height="32" rx="8" fill="#9b2226"/>
+                        <rect x="44" y="62" width="12" height="32" fill="#ffb703"/>
+                    </svg>
+                </div>
+                <h3>Король Школы</h3>
+                <p style="color:#d8d4e8; font-size:0.9rem;">Абсолютная вершина сервера. Эксклюзивный статус для избранных.</p>
+            </div>
+        </div>
+    </section>
+
     <section id="recruit" class="reveal">
         <div class="recruit-box">
-            <div class="badge">📢 ОТКРЫТ НАБОР В МЕДИА-ОТДЕЛ</div>
-            <h2>Умеешь снимать или пиарить? Нам нужен именно ты!</h2>
-            <p>Мы ищем активных ребят, которые помогут рассказать о <strong>DragonWorld 26.2</strong> всему миру. Снимай TikTok, Shorts, Reels, делай посты или приглашай друзей!</p>
+            <div class="badge">📢 НАБОР ПИАР-МЕНЕДЖЕРОВ И МЕДИА</div>
+            <h2>Делаешь рекламу или снимаешь видео? Залетай в команду!</h2>
+            <p>Мы ищем активных ребят для продвижения <strong>Aetherfall SMP (26.2)</strong>. Снимай TikTok, Shorts, Reels, делай посты в соцсетях и приглашай игроков!</p>
             
             <div class="perks">
                 <div class="perk-item">💎 Уникальный префикс MEDIA / PR</div>
-                <div class="perk-item">🎁 Бонусы и награды на сервере</div>
-                <div class="perk-item">🚀 Помощь в продвижении твоего канала</div>
+                <div class="perk-item">🎁 Бесплатные привилегии и бонусы</div>
+                <div class="perk-item">🚀 Поддержка от администрации</div>
             </div>
 
             <a href="https://t.me" target="_blank" class="btn btn-primary">
-                Подать заявку в @DragonWorldMinecraft
+                Подать заявку в ТГ: @DragonWorldMinecraft
             </a>
         </div>
     </section>
-
     <footer>
-        <p>© 2026 DragonWorld SMP (Minecraft 26.2). Все права защищены. Не является официальным продуктом Mojang.</p>
+        <p>© 2026 Aetherfall SMP (Minecraft 26.2). Все права защищены. Не является официальным продуктом Mojang.</p>
     </footer>
 
-    <div id="toast">✅ IP-адрес скопирован в буфер обмена!</div>
+    <!-- Модальное окно покупки и заявки -->
+    <div class="modal-overlay" id="buyModal">
+        <div class="modal-box">
+            <button class="close-modal" onclick="closeBuyModal()">&times;</button>
+
+            <!-- Шаг 1: Ввод ника -->
+            <div id="step1">
+                <h3 id="modalTitle1">Покупка: Школозавр</h3>
+                <p style="color:#4cc9f0; font-weight:800; margin-bottom:15px;" id="modalPrice1">Стоимость: 19 ₽</p>
+                <input type="text" class="modal-input" id="nickStep1" placeholder="Введите ваш игровой никнейм">
+                <button class="btn-buy" onclick="goToStep2()">Купить</button>
+            </div>
+
+            <!-- Шаг 2: Заявка высшей администрации в Firebase -->
+            <div id="step2" style="display:none;">
+                <h3 style="margin-bottom:12px;">Заявка высшей администрации</h3>
+                <div class="admin-notice">
+                    ⚠️ Чтобы купить привилегию <strong id="selectedDonateText"></strong>, подайте заявку высшей администрации! Мы свяжемся с вами для оплаты и выдачи.
+                </div>
+                <input type="text" class="modal-input" id="nickStep2" readonly>
+                <input type="text" class="modal-input" id="tgInput" placeholder="Ваш Telegram (@username)">
+                <textarea class="modal-input" id="commentInput" rows="3" placeholder="Комментарий (удобный способ оплаты или вопрос)"></textarea>
+                <button class="btn btn-primary" style="width:100%;" id="submitBtn" onclick="sendToFirebase()">
+                    📩 Подать заявку
+                </button>
+            </div>
+
+            <!-- Шаг 3: Успешная отправка -->
+            <div id="step3" style="display:none;">
+                <div style="font-size:3.2rem; margin-bottom:10px;">✅</div>
+                <h3 style="margin-bottom:10px;">Заявка отправлена!</h3>
+                <p style="color:#a09cb0; font-size:0.92rem; margin-bottom:20px;">
+                    Высшая администрация <strong>Aetherfall SMP</strong> получила вашу заявку и скоро напишет вам в Telegram.
+                </p>
+                <a href="https://t.me" target="_blank" class="btn btn-tg" style="width:100%; margin-bottom:10px;">Перейти в наш Telegram</a>
+                <button class="btn" style="width:100%; background:rgba(255,255,255,0.1); color:#fff;" onclick="closeBuyModal()">Закрыть</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast">✅ IP-адрес Aetherfall SMP скопирован!</div>
 
     <script>
+        const FIREBASE_URL = "https://smp12-835e6-default-rtdb.firebaseio.com/";
+        let currentDonate = "";
+        let currentPrice = "";
+
         function copyIP(ip) {
             navigator.clipboard.writeText(ip).then(() => {
                 const toast = document.getElementById("toast");
                 toast.className = "show";
                 setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 2900);
             });
+        }
+
+        function openBuyModal(donateName, price) {
+            currentDonate = donateName;
+            currentPrice = price;
+            document.getElementById("modalTitle1").innerText = "Покупка: " + donateName;
+            document.getElementById("modalPrice1").innerText = "Стоимость: " + price;
+            document.getElementById("nickStep1").value = "";
+            document.getElementById("tgInput").value = "";
+            document.getElementById("commentInput").value = "";
+
+            document.getElementById("step1").style.display = "block";
+            document.getElementById("step2").style.display = "none";
+            document.getElementById("step3").style.display = "none";
+
+            document.getElementById("buyModal").classList.add("open");
+        }
+
+        function closeBuyModal() {
+            document.getElementById("buyModal").classList.remove("open");
+        }
+
+        function goToStep2() {
+            const nick = document.getElementById("nickStep1").value.trim();
+            if (!nick) {
+                alert("Пожалуйста, введите ваш игровой ник!");
+                return;
+            }
+            document.getElementById("selectedDonateText").innerText = currentDonate + " (" + currentPrice + ")";
+            document.getElementById("nickStep2").value = nick;
+
+            document.getElementById("step1").style.display = "none";
+            document.getElementById("step2").style.display = "block";
+        }
+
+        async function sendToFirebase() {
+            const nickname = document.getElementById("nickStep2").value.trim();
+            const telegram = document.getElementById("tgInput").value.trim();
+            const comment = document.getElementById("commentInput").value.trim();
+
+            if (!telegram) {
+                alert("Укажите ваш Telegram (@username), чтобы администрация могла с вами связаться!");
+                return;
+            }
+
+            const btn = document.getElementById("submitBtn");
+            btn.disabled = true;
+            btn.innerText = "Отправка заявки...";
+
+            const payload = {
+                nickname: nickname,
+                donate: currentDonate + " (" + currentPrice + ")",
+                telegram: telegram,
+                comment: comment || "Без комментария",
+                date: new Date().toLocaleString("ru-RU"),
+                status: "Новая заявка"
+            };
+
+            try {
+                const response = await fetch(FIREBASE_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    document.getElementById("step2").style.display = "none";
+                    document.getElementById("step3").style.display = "block";
+                } else {
+                    alert("Ошибка при отправке. Проверьте вкладку Rules в вашей базе Firebase.");
+                }
+            } catch (error) {
+                alert("Ошибка соединения с базой данных.");
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "📩 Подать заявку";
+            }
         }
 
         function reveal() {
