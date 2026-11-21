@@ -868,7 +868,7 @@
             document.getElementById("step2").style.display = "block";
         }
 
-        async function sendToFirebase() {
+               async function sendToFirebase() {
             const nickname = document.getElementById("nickStep2").value.trim();
             const contact = document.getElementById("contactInput").value.trim();
             const comment = document.getElementById("commentInput").value.trim();
@@ -898,14 +898,16 @@
                     body: JSON.stringify(payload)
                 });
 
+                const resData = await response.json();
+
                 if (response.ok) {
                     document.getElementById("step2").style.display = "none";
                     document.getElementById("step3").style.display = "block";
                 } else {
-                    alert("Ошибка при отправке. Проверьте правила Rules в Firebase.");
+                    alert("Код ошибки: " + response.status + " | Причина: " + JSON.stringify(resData));
                 }
             } catch (error) {
-                alert("Ошибка соединения с базой данных.");
+                alert("Ошибка сети: " + error.message);
             } finally {
                 btn.disabled = false;
                 btn.innerText = "📩 Подать заявку";
