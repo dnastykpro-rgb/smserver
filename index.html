@@ -109,7 +109,6 @@
             font-size: 1.08rem;
             margin-bottom: 35px;
         }
-
         .cta-group {
             display: flex;
             gap: 15px;
@@ -150,6 +149,7 @@
             transform: translateY(-3px);
             background: #1d8ec4;
         }
+
         section {
             padding: 75px 8%;
         }
@@ -258,7 +258,7 @@
         }
 
         .btn-buy:hover { filter: brightness(1.12); transform: scale(1.02); }
-
+        /* Закрытые высшие ранги */
         .exclusive-title {
             text-align: center;
             font-size: 1.4rem;
@@ -301,6 +301,7 @@
 
         .exclusive-card h3 { font-size: 1.5rem; color: var(--gold); margin-bottom: 8px; }
 
+        /* Блок набора в пиар */
         .recruit-box {
             background: linear-gradient(135deg, #1b1535 0%, #2a163d 100%);
             border: 2px solid var(--accent);
@@ -329,6 +330,7 @@
             font-size: 0.9rem;
         }
 
+        /* Модальное окно покупки и админ-панели */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -405,7 +407,6 @@
             font-size: 0.85rem;
             border-top: 1px solid rgba(255, 255, 255, 0.05);
         }
-
         .bg-glow {
             position: fixed;
             width: 500px;
@@ -475,7 +476,7 @@
             <a href="#about">О сервере</a>
             <a href="#donate">Привилегии</a>
             <a href="#recruit">Набор в пиар</a>
-            <a href="https://t.me" target="_blank">Telegram</a>
+            <a href="https://t.me" target="_blank">Канал</a>
         </nav>
     </header>
 
@@ -485,7 +486,7 @@
         <p>Уникальное выживание на новейшей версии 26.2 со школьной иерархией статусов, ивентами и живым комьюнити. Залетай и займи своё место!</p>
         <div class="cta-group">
             <button class="btn btn-primary" onclick="copyIP('aetherfallsmpnormm.vcraft.top:25162')">📋 IP: aetherfallsmpnormm.vcraft.top:25162</button>
-            <a href="https://t.me" target="_blank" class="btn btn-tg">✈️ Наш Telegram</a>
+            <a href="#donate" class="btn btn-tg">💎 Выбрать привилегию</a>
         </div>
     </section>
 
@@ -558,7 +559,6 @@
                 <div class="price-tag">39 ₽</div>
                 <button class="btn-buy" onclick="openBuyModal('Старшеклассник', '39 ₽')">Купить</button>
             </div>
-
             <!-- 3. Умник -->
             <div class="donate-card">
                 <span class="tier-num">#3</span>
@@ -741,12 +741,16 @@
             </div>
 
             <a href="https://t.me" target="_blank" class="btn btn-primary">
-                Подать заявку в ТГ: @DragonWorldMinecraft
+                Наш ресурс: @DragonWorldMinecraft
             </a>
         </div>
     </section>
+
     <footer>
         <p>© 2026 Aetherfall SMP (Minecraft 26.2). Все права защищены. Не является официальным продуктом Mojang.</p>
+        <button onclick="openAdminModal()" style="margin-top:12px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); color:#a09cb0; padding:6px 14px; border-radius:8px; cursor:pointer; font-size:0.8rem;">
+            🔐 Вход для администрации
+        </button>
     </footer>
 
     <!-- Модальное окно покупки и заявки -->
@@ -754,7 +758,6 @@
         <div class="modal-box">
             <button class="close-modal" onclick="closeBuyModal()">&times;</button>
 
-            <!-- Шаг 1: Ввод ника -->
             <div id="step1">
                 <h3 id="modalTitle1">Покупка: Школозавр</h3>
                 <p style="color:#4cc9f0; font-weight:800; margin-bottom:15px;" id="modalPrice1">Стоимость: 19 ₽</p>
@@ -762,37 +765,65 @@
                 <button class="btn-buy" onclick="goToStep2()">Купить</button>
             </div>
 
-            <!-- Шаг 2: Заявка высшей администрации в Firebase -->
             <div id="step2" style="display:none;">
                 <h3 style="margin-bottom:12px;">Заявка высшей администрации</h3>
                 <div class="admin-notice">
                     ⚠️ Чтобы купить привилегию <strong id="selectedDonateText"></strong>, подайте заявку высшей администрации! Мы свяжемся с вами для оплаты и выдачи.
                 </div>
                 <input type="text" class="modal-input" id="nickStep2" readonly>
-                <input type="text" class="modal-input" id="tgInput" placeholder="Ваш Telegram (@username)">
+                <input type="text" class="modal-input" id="contactInput" placeholder="Контакт для связи (VK, Discord или в игре)">
                 <textarea class="modal-input" id="commentInput" rows="3" placeholder="Комментарий (удобный способ оплаты или вопрос)"></textarea>
                 <button class="btn btn-primary" style="width:100%;" id="submitBtn" onclick="sendToFirebase()">
                     📩 Подать заявку
                 </button>
             </div>
 
-            <!-- Шаг 3: Успешная отправка -->
             <div id="step3" style="display:none;">
                 <div style="font-size:3.2rem; margin-bottom:10px;">✅</div>
                 <h3 style="margin-bottom:10px;">Заявка отправлена!</h3>
                 <p style="color:#a09cb0; font-size:0.92rem; margin-bottom:20px;">
-                    Высшая администрация <strong>Aetherfall SMP</strong> получила вашу заявку и скоро напишет вам в Telegram.
+                    Высшая администрация <strong>Aetherfall SMP</strong> получила вашу заявку в базу данных и скоро свяжется с вами.
                 </p>
-                <a href="https://t.me" target="_blank" class="btn btn-tg" style="width:100%; margin-bottom:10px;">Перейти в наш Telegram</a>
-                <button class="btn" style="width:100%; background:rgba(255,255,255,0.1); color:#fff;" onclick="closeBuyModal()">Закрыть</button>
+                <button class="btn btn-primary" style="width:100%;" onclick="closeBuyModal()">Отлично</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно Админ-панели -->
+    <div class="modal-overlay" id="adminModal">
+        <div class="modal-box" style="max-width:650px; max-height:85vh; overflow-y:auto;">
+            <button class="close-modal" onclick="closeAdminModal()">&times;</button>
+
+            <div id="adminLoginBox">
+                <h3 style="margin-bottom:15px;">🔐 Панель Высшей Администрации</h3>
+                <input type="text" class="modal-input" id="adminLoginInput" placeholder="Логин админа">
+                <input type="password" class="modal-input" id="adminPassInput" placeholder="Пароль">
+                <button class="btn btn-primary" style="width:100%;" onclick="checkAdminLogin()">Войти в кабинет</button>
+            </div>
+
+            <div id="adminPanelBox" style="display:none; text-align:left;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; padding-right:25px;">
+                    <h3>📋 Заявки на донат (<span id="currentAdminName"></span>)</h3>
+                    <button onclick="loadRequests()" style="background:#229ED9; color:#fff; border:none; padding:6px 12px; border-radius:8px; cursor:pointer; font-weight:700;">🔄 Обновить</button>
+                </div>
+                <div id="requestsList" style="display:flex; flex-direction:column; gap:12px;">
+                    Загрузка заявок...
+                </div>
             </div>
         </div>
     </div>
 
     <div id="toast">✅ IP-адрес Aetherfall SMP скопирован!</div>
-
     <script>
-        const FIREBASE_URL = "https://smp12-835e6-default-rtdb.firebaseio.com/";
+        const FIREBASE_BASE = "https://smp12-835e6-default-rtdb.firebaseio.com/";
+        
+        // Аккаунты высшей администрации
+        const ADMINS = {
+            "Direktor2990": "smpsmpsmp222",
+            "KorolSMP222": "KorolKing2222",
+            "Vadim55555(Admin)": "55555smpserver"
+        };
+
         let currentDonate = "";
         let currentPrice = "";
 
@@ -810,7 +841,7 @@
             document.getElementById("modalTitle1").innerText = "Покупка: " + donateName;
             document.getElementById("modalPrice1").innerText = "Стоимость: " + price;
             document.getElementById("nickStep1").value = "";
-            document.getElementById("tgInput").value = "";
+            document.getElementById("contactInput").value = "";
             document.getElementById("commentInput").value = "";
 
             document.getElementById("step1").style.display = "block";
@@ -839,11 +870,11 @@
 
         async function sendToFirebase() {
             const nickname = document.getElementById("nickStep2").value.trim();
-            const telegram = document.getElementById("tgInput").value.trim();
+            const contact = document.getElementById("contactInput").value.trim();
             const comment = document.getElementById("commentInput").value.trim();
 
-            if (!telegram) {
-                alert("Укажите ваш Telegram (@username), чтобы администрация могла с вами связаться!");
+            if (!contact) {
+                alert("Укажите контакт для связи (VK, Discord или как найти вас в игре)!");
                 return;
             }
 
@@ -854,14 +885,14 @@
             const payload = {
                 nickname: nickname,
                 donate: currentDonate + " (" + currentPrice + ")",
-                telegram: telegram,
+                contact: contact,
                 comment: comment || "Без комментария",
                 date: new Date().toLocaleString("ru-RU"),
-                status: "Новая заявка"
+                status: "Ожидает выдачи"
             };
 
             try {
-                const response = await fetch(FIREBASE_URL, {
+                const response = await fetch(`${FIREBASE_BASE}.json`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(payload)
@@ -871,13 +902,94 @@
                     document.getElementById("step2").style.display = "none";
                     document.getElementById("step3").style.display = "block";
                 } else {
-                    alert("Ошибка при отправке. Проверьте вкладку Rules в вашей базе Firebase.");
+                    alert("Ошибка при отправке. Проверьте правила Rules в Firebase.");
                 }
             } catch (error) {
                 alert("Ошибка соединения с базой данных.");
             } finally {
                 btn.disabled = false;
                 btn.innerText = "📩 Подать заявку";
+            }
+        }
+
+        function openAdminModal() {
+            document.getElementById("adminModal").classList.add("open");
+        }
+
+        function closeAdminModal() {
+            document.getElementById("adminModal").classList.remove("open");
+        }
+
+        function checkAdminLogin() {
+            const login = document.getElementById("adminLoginInput").value.trim();
+            const pass = document.getElementById("adminPassInput").value.trim();
+
+            if (ADMINS[login] && ADMINS[login] === pass) {
+                document.getElementById("currentAdminName").innerText = login;
+                document.getElementById("adminLoginBox").style.display = "none";
+                document.getElementById("adminPanelBox").style.display = "block";
+                loadRequests();
+            } else {
+                alert("❌ Неверный логин или пароль администратора!");
+            }
+        }
+
+        async function loadRequests() {
+            const listEl = document.getElementById("requestsList");
+            listEl.innerHTML = "<p style='color:#a09cb0;'>Загрузка заявок из базы...</p>";
+
+            try {
+                const res = await fetch(`${FIREBASE_BASE}.json`);
+                const data = await res.json();
+
+                if (!data) {
+                    listEl.innerHTML = "<p style='color:#a09cb0;'>Пока нет ни одной заявки.</p>";
+                    return;
+                }
+
+                listEl.innerHTML = "";
+                const keys = Object.keys(data).reverse();
+
+                keys.forEach(key => {
+                    const item = data[key];
+                    const isDone = item.status === "Выдано ✅";
+                    const card = document.createElement("div");
+                    card.style.cssText = `background:#0e0b1a; border:1px solid ${isDone ? '#2ecc71' : '#9d4edd'}; border-radius:14px; padding:14px;`;
+                    card.innerHTML = `
+                        <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                            <strong style="color:#ffb703; font-size:1.05rem;">${item.nickname} — ${item.donate}</strong>
+                            <span style="font-size:0.78rem; color:#a09cb0;">${item.date}</span>
+                        </div>
+                        <p style="font-size:0.88rem; margin-bottom:4px;">📞 <b>Связь:</b> ${item.contact}</p>
+                        <p style="font-size:0.88rem; margin-bottom:8px; color:#d8d4e8;">💬 <b>Коммент:</b> ${item.comment}</p>
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <span style="font-size:0.82rem; font-weight:800; color:${isDone ? '#2ecc71' : '#4cc9f0'};">Статус: ${item.status}</span>
+                            <div style="display:flex; gap:8px;">
+                                ${!isDone ? `<button onclick="markDone('${key}')" style="background:#2ecc71; color:#fff; border:none; padding:5px 10px; border-radius:6px; cursor:pointer; font-weight:700; font-size:0.8rem;">✅ Выдано</button>` : ''}
+                                <button onclick="deleteRequest('${key}')" style="background:#e63946; color:#fff; border:none; padding:5px 10px; border-radius:6px; cursor:pointer; font-weight:700; font-size:0.8rem;">🗑 Удалить</button>
+                            </div>
+                        </div>
+                    `;
+                    listEl.appendChild(card);
+                });
+            } catch (e) {
+                listEl.innerHTML = "<p style='color:#e63946;'>Ошибка загрузки! Проверь, что в Firebase Rules стоит .read: true для donate_requests.</p>";
+            }
+        }
+
+        async function markDone(id) {
+            await fetch(`${FIREBASE_BASE}/${id}.json`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ status: "Выдано ✅" })
+            });
+            loadRequests();
+        }
+
+        async function deleteRequest(id) {
+            if (confirm("Точно удалить эту заявку?")) {
+                await fetch(`${FIREBASE_BASE}/${id}.json`, { method: "DELETE" });
+                loadRequests();
             }
         }
 
